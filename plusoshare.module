@@ -1,0 +1,132 @@
+<?php
+
+function plusoshare_block_info(){
+  $blocks = array();
+  
+  $blocks['plusoshare'] = array(
+    'info' => t('Pluso share buttons'),
+    'cache' => DRUPAL_NO_CACHE,
+  );
+  
+  return $blocks;
+}
+
+
+function plusoshare_block_view($delta = ''){
+  $block = array();
+  switch ($delta){
+  case 'plusoshare':
+    $block['subject'] = '<none>';
+    $block['content'] = theme('plusoshare');
+    break;
+  }
+  return $block;
+}
+
+function plusoshare_theme($existing, $type, $theme, $path){
+  $themes = array();
+  $themes['plusoshare'] = array('template' => 'plusoshare');
+  return $themes;
+}
+
+function plusoshare_block_configure($delta = ''){
+  $form = array();
+  // настройки по умолчанию
+  $default = variable_get('plusoshare_options','')->options;
+  
+  
+  if ( $delta == 'plusoshare'){
+    $form['settings'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Settings'),
+      '#collapsed' => TRUE,
+      '#collapsible' => FALSE,
+    );
+    
+    $form['settings']['size'] = array(
+      '#title' => t('Size'),
+      '#type' => 'radios',
+      '#options' => array('small' => t('Small') . ' (20x20px)', 'medium' => t('Medium')  . ' (30x30px)', 'big' => t('Big') . ' (40x40px)'),
+      '#default_value' => $default->size,
+    );
+    
+    $form['settings']['shape'] = array(
+      '#title' => t('Shape'),
+      '#type' => 'radios',
+      '#options' => array('square' => t('Square'), 'round' =>t('Round')),
+      '#default_value' => "$default->shape",
+    );
+    
+    $form['settings']['multiline'] = array(
+      '#title' => t('Multiline'),
+      '#type' => 'radios',
+      '#options' => array('line' => t('No'), 'multiline' =>t('Yes')),
+      '#default_value' => $default->multiline,
+    );
+    
+    $form['settings']['counter'] = array(
+      '#title' => t('Counter'),
+      '#type' => 'radios',
+      '#options' => array('nocounter' => t('No'), 'counter' =>t('Yes')),
+      '#default_value' => $default->counter,
+    );
+    
+    $form['settings']['layout'] = array(
+      '#title' => t('Layout'),
+      '#type' => 'radios',
+      '#options' => array('vertical' => t('Vertical'), 'horizontal' =>t('Horizontal')),
+      '#default_value' => $default->layout,
+    );
+    
+    $form['appearance'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Appearance'),
+      '#collapsed' => FALSE,
+      '#collapsible' => TRUE,
+    );
+    
+    $form['appearance']['color'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Background color'),
+      '#default_value' => $default->color,
+      '#description' =>  'Empty value = transparent color',
+    );
+    
+    $pluso_theme = array(
+      '01' => 'Theme 01',
+      '02' => 'Theme 02',
+      '03' => 'Theme 03',
+      '04' => 'Theme 04',
+      '05' => 'Theme 05',
+      '06' => 'Theme 06',
+      '07' => 'Theme 07',
+      '08' => 'Theme 08',
+      '09' => 'Theme 09',
+      '10' => 'Theme 10',
+      '11' => 'Theme 11',
+      '12' => 'Theme 12',
+      '13' => 'Theme 13',
+      
+    );
+    
+    $form['appearance']['theme'] = array(
+      '#title' => t('Theme'),
+      '#type' => 'radios',
+      '#options' => $pluso_theme,
+      '#default_value' => $default->theme,
+    );
+  }
+ 
+  return $form;
+}
+
+function plusoshare_block_save($delta = '', $edit = array()){
+  if ( $delta == 'plusoshare' ){
+    $options = variable_get('plusoshare_options','');
+    
+  } 
+}
+
+function template_preprocess_plusoshare(&$vars) {
+  $vars['plusoshare'] = variable_get('plusoshare_options','');
+}

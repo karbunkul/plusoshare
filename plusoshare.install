@@ -1,0 +1,7 @@
+<?php
+
+function plusoshare_install(){
+  $pluso_defaults ='{"options":{"size":"big","shape":"square","multiline":"line","color":"transparent","counter":"counter","layout":"horizontal","theme":"06","domain":"www.tgasu.ru"},"services":["vkontakte","odnoklassniki","facebook","twitter","google","moimir","email","print"]}';
+  
+  variable_set('plusoshare_options', json_decode($pluso_defaults));
+}
