@@ -3,5 +3,60 @@
 function plusoshare_install(){
   $pluso_defaults ='{"options":{"size":"big","shape":"square","multiline":"line","color":"transparent","counter":"counter","layout":"horizontal","theme":"06","domain":"www.tgasu.ru"},"services":["vkontakte","odnoklassniki","facebook","twitter","google","moimir","email","print"]}';
   
-  variable_set('plusoshare_options', json_decode($pluso_defaults));
+  $pluso_defaults = json_decode($pluso_defaults);
+  
+  $pluso_defaults->script = <<<EOT
+<script type="text/javascript">
+  (function() {
+    if (window.pluso)if (typeof window.pluso.start == "function") return;
+    var d = document, s = d.createElement('script'), g = 'getElementsByTagName';
+    s.type = 'text/javascript'; s.charset='UTF-8'; s.async = true;
+    s.src = ('https:' == window.location.protocol ? 'https' : 'http')  + '://share.pluso.ru/pluso-like.js';
+    var h=d[g]('head')[0] || d[g]('body')[0];
+    h.appendChild(s);
+  })();
+</script>
+EOT;
+
+  $pluso_defaults->source = <<<EOT
+['vkontakte','ВКонтакте',5,3],
+['odnoklassniki','Одноклассники',4,4],
+['facebook','Facebook',1,1],
+['twitter','Twitter',2,2],
+['google','Google+',7,5],
+['moimir','Мой Мир@Mail.Ru',8,7],
+['pinterest','Pinterest',6,17],
+['livejournal','LiveJournal',9,6],
+['tumblr','Tumblr',3,22],
+['liveinternet','LiveInternet',10,8],
+['springpad','Springpad',11,19],
+['stumbleupon','StumbleUpon',12,20],
+['myspace','mySpace',13,15],
+['formspring','Formspring.me',14,13],
+['blogger','Blogger',15,9],
+['digg','Digg',16,11],
+['surfingbird','Surfingbird',17,21],
+['bobrdobr','БобрДобр',18,24],
+['readability','Readability',19,18],
+['instapaper','Instapaper',20,14],
+['evernote','Evernote',21,12],
+['delicious','Delicious',26,10],
+['vkrugu','В Кругу Друзей',25,25],
+['pinme','Pinme',27,16],
+['yandex','Я.ру',28,23],
+['yazakladki','Яндекс.Закладки',29,29],
+['moikrug','МойКруг',30,30],
+['googlebookmark','Google закладки',31,31],
+['yahoo','Yahoo закладки',32,32],
+['moemesto','МоёМесто',33,33],
+['memori','Memori.ru',34,34],
+['juick','Juick',36,35],
+['linkedin','LinkedIn',37,36],
+['webdiscover','WebDiscover',39,37],
+['bookmark','В закладки',22,26],
+['email','Отправить на email',23,27],
+['print','Печатать',24,28]  
+EOT;
+  
+  variable_set('plusoshare_options', $pluso_defaults);
 }

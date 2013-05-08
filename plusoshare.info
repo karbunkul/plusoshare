@@ -3,3 +3,4 @@ description = Pluso share social buttons
 core = 7.x
 version = 1.0-dev
 package = Karbunkul
+configure = admin/config/karbunkul/plusoshare/settings

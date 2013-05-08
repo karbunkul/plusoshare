@@ -40,7 +40,7 @@ function plusoshare_block_configure($delta = ''){
       '#type' => 'fieldset',
       '#title' => t('Settings'),
       '#collapsed' => TRUE,
-      '#collapsible' => FALSE,
+      '#collapsible' => TRUE,
     );
     
     $form['settings']['size'] = array(
@@ -81,7 +81,7 @@ function plusoshare_block_configure($delta = ''){
     $form['appearance'] = array(
       '#type' => 'fieldset',
       '#title' => t('Appearance'),
-      '#collapsed' => FALSE,
+      '#collapsed' => TRUE,
       '#collapsible' => TRUE,
     );
     
@@ -137,6 +137,7 @@ function plusoshare_block_save($delta = '', $edit = array()){
 
 function template_preprocess_plusoshare(&$vars) {
   $vars['plusoshare'] = pluso_generate();
+  $vars['script'] = variable_get('plusoshare_options','')->script;
 }
 
 function pluso_generate(){
@@ -150,4 +151,89 @@ function pluso_generate(){
   $pluso['background'] = 'data-background="' . $obj->options->color . '"';
   $pluso['url'] = 'data-url="' . $obj->options->domain . '/' . $_GET['q'] . '"';
   return implode($pluso, ' ');
+}
+
+
+function plusoshare_menu(){
+  $items = array();
+  
+  $items['admin/config/karbunkul'] = array(
+    'title' => 'Karbunkul',
+    'description' => '',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('access administration pages'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+
+  $items['admin/config/karbunkul/plusoshare'] = array(
+    'title' => 'Pluso share',
+    'description' => 'Pluso share settings and services',
+    'access callback' => TRUE,
+    'page callback' => 'page_pluso',
+    
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  $items['admin/config/karbunkul/plusoshare/default'] = array(
+    'title' => t('Pluso share'),
+    'access callback' => TRUE,
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  
+  $items['admin/config/karbunkul/plusoshare/settings'] = array(
+    'title' => 'Settings',
+    'description' => '',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('plusoshare_settings_form'),
+    'access callback' => TRUE,
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 10,
+  );
+  
+  
+  return $items;
+}
+
+function plusoshare_settings_form($form){
+  $obj = variable_get('plusoshare_options','');
+  
+  $form['script'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Script',
+    '#rows' => 10,
+    '#default_value' => $obj->script
+  );
+  
+  $form['services'] = array(
+    '#type' => 'textarea',
+    '#title' => 'Services',
+    '#rows' => 10,
+    '#default_value' => $obj->source
+  );
+  
+  $form = system_settings_form($form);
+  
+  return $form;
+}
+
+function page_pluso(){
+  $obj = variable_get('plusoshare_options','');
+  
+  $ptn = "/\[.*\]/m";
+  $str = $obj->source;
+  preg_match_all($ptn, $str, $matches);
+  dsm($matches[0]);
+  
+  
+  //dsm();
+  
+  $out = array(
+    '#type' => 'markup',
+    '#markup' => 'Services',
+  );
+  
+  
+  return $out;
 }
