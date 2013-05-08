@@ -7,11 +7,4 @@
  h.appendChild(s);
 })();</script>
 
-<center>
-  <div class="pluso" data-options="big,square,line,horizontal,nocounter,theme=06" data-services="vkontakte,facebook,google,twitter,odnoklassniki,moimir,evernote,blogger,bookmark,email,print" data-background="transparent" data-url="http://www.tgasu.ru/<?php print $_GET['q'];?>"></div>
-
-</center>
-
-<?php
-  dsm($plusoshare);
-?>
+<center><div class="pluso" <?php print $plusoshare;?>></div></center>
