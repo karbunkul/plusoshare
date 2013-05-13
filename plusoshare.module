@@ -116,6 +116,27 @@ function plusoshare_block_configure($delta = ''){
       '#options' => $pluso_theme,
       '#default_value' => $default->theme,
     );
+    
+    $form['services-set'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Services'),
+      '#collapsed' => TRUE,
+      '#collapsible' => TRUE,
+    );
+    
+    
+    $options = array();
+    foreach (get_services() AS $key => $val){
+      $options[$key] = $val->title;
+    }
+    
+    $form['services-set']['services'] = array(
+      '#title' => t('Services'),
+      '#type' => 'checkboxes',
+      '#options' => $options,
+      '#default_value' => variable_get('plusoshare_options','')->services,
+    );
+    //dsm($default);
   }
  
   return $form;
@@ -123,6 +144,7 @@ function plusoshare_block_configure($delta = ''){
 
 function plusoshare_block_save($delta = '', $edit = array()){
   if ( $delta == 'plusoshare' ){
+    //dsm($edit);
     $settings = variable_get('plusoshare_options','');
     $options = $settings->options;
     
@@ -130,8 +152,23 @@ function plusoshare_block_save($delta = '', $edit = array()){
       $options->$key = $edit[$key];
     }
     
+    $services = array();
+    foreach ($edit['services'] AS $key => $val){
+      //dsm($val);
+      if ( $val !== 0){
+        $services[] = $val;
+      }
+      //dsm($services);
+    }
+    
+    $settings->services = $services;
+    
+    
+    
     $settings->options = $options;
     variable_set('plusoshare_options', $settings);
+    
+    
   } 
 }
 
@@ -147,9 +184,11 @@ function pluso_generate(){
   $obj->options->theme = 'theme=' . $obj->options->theme;
   
   $pluso['options'] = 'data-options="' . implode((array)$obj->options, ',') . '"';
+  
   $pluso['services'] = 'data-services="' . implode($obj->services, ',') . '"';
   $pluso['background'] = 'data-background="' . $obj->options->color . '"';
   $pluso['url'] = 'data-url="' . $obj->options->domain . '/' . $_GET['q'] . '"';
+  //dsm($obj);
   return implode($pluso, ' ');
 }
 
@@ -198,7 +237,7 @@ function plusoshare_menu(){
 
 function plusoshare_settings_form($form){
   $obj = variable_get('plusoshare_options','');
-  
+  //dsm($obj);
   $form['script'] = array(
     '#type' => 'textarea',
     '#title' => 'Script',
@@ -219,15 +258,9 @@ function plusoshare_settings_form($form){
 }
 
 function page_pluso(){
-  $obj = variable_get('plusoshare_options','');
   
-  $ptn = "/\[.*\]/m";
-  $str = $obj->source;
-  preg_match_all($ptn, $str, $matches);
-  dsm($matches[0]);
+  //dsm(get_services());
   
-  
-  //dsm();
   
   $out = array(
     '#type' => 'markup',
@@ -236,4 +269,23 @@ function page_pluso(){
   
   
   return $out;
+}
+
+function get_services(){
+  // получаем список сервисов из настроек
+  $obj = variable_get('plusoshare_options','');
+  
+  $ptn = "/\[.*\]/m";
+  $str = $obj->source;
+  preg_match_all($ptn, $str, $matches);
+  foreach ($matches[0] AS $key => $val){
+    $clear = preg_match('/(?<=\[).[^\]]*/', $val, $arr);
+    $arr = explode(',', $arr[0]);
+    
+    $args = array('!name' => str_replace("'", "", $arr[0]), '!title' => str_replace("'", "", $arr[1]));
+    $matches[0][$key] = format_string('"!name":{"title":"!title"}', $args);
+  }
+  
+  $services = json_decode('{' . implode(',',$matches[0]) . '}');
+  return $services;
 }
