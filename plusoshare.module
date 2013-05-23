@@ -78,6 +78,12 @@ function plusoshare_block_configure($delta = ''){
       '#default_value' => $default->layout,
     );
     
+    $form['settings']['account'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Account'),
+      '#default_value' => $default->account,
+    );
+    
     $form['appearance'] = array(
       '#type' => 'fieldset',
       '#title' => t('Appearance'),
@@ -188,6 +194,7 @@ function pluso_generate(){
   $pluso['services'] = 'data-services="' . implode($obj->services, ',') . '"';
   $pluso['background'] = 'data-background="' . $obj->options->color . '"';
   $pluso['url'] = 'data-url="' . $obj->options->domain . '/' . $_GET['q'] . '"';
+  $pluso['user'] = 'data-user="' . $obj->options->account . '"';
   //dsm($obj);
   return implode($pluso, ' ');
 }
