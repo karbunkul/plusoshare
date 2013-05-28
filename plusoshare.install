@@ -1,10 +1,10 @@
 <?php
 
-function plusoshare_install(){
-  $pluso_defaults ='{"options":{"size":"big","shape":"square","multiline":"line","color":"transparent","counter":"counter","layout":"horizontal","theme":"06","domain":"www.tgasu.ru", "account":""},"services":["vkontakte","odnoklassniki","facebook","twitter","google","moimir","email","print"]}';
-  
+function plusoshare_install() {
+  $pluso_defaults = '{"options":{"size":"big","shape":"square","multiline":"line","color":"transparent","counter":"counter","layout":"horizontal","theme":"06","domain":"www.tgasu.ru", "account":""},"services":["vkontakte","odnoklassniki","facebook","twitter","google","moimir","email","print"]}';
+
   $pluso_defaults = json_decode($pluso_defaults);
-  
+
   $pluso_defaults->script = <<<EOT
 <script type="text/javascript">
   (function() {
@@ -55,8 +55,8 @@ EOT;
 ['webdiscover','WebDiscover',39,37],
 ['bookmark','В закладки',22,26],
 ['email','Отправить на email',23,27],
-['print','Печатать',24,28]  
+['print','Печатать',24,28]
 EOT;
-  
+
   variable_set('plusoshare_options', $pluso_defaults);
 }

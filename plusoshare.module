@@ -1,110 +1,125 @@
 <?php
 
-function plusoshare_block_info(){
+/**
+ * @file
+ * Module plusoshare.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function plusoshare_block_info() {
   $blocks = array();
-  
+
   $blocks['plusoshare'] = array(
     'info' => t('Pluso share buttons'),
     'cache' => DRUPAL_NO_CACHE,
   );
-  
   return $blocks;
 }
-
-
-function plusoshare_block_view($delta = ''){
+/**
+ * Implements hook_block_view().
+ */
+function plusoshare_block_view($delta = '') {
   $block = array();
-  switch ($delta){
-  case 'plusoshare':
-    $block['subject'] = '<none>';
-    $block['content'] = theme('plusoshare');
-    break;
+  switch ($delta) {
+    case 'plusoshare':
+      $block['subject'] = '';
+      $block['content'] = theme('plusoshare');
+      break;
   }
   return $block;
 }
-
-function plusoshare_theme($existing, $type, $theme, $path){
+/**
+ * Implements hook_theme().
+ */
+function plusoshare_theme($existing, $type, $theme, $path) {
   $themes = array();
   $themes['plusoshare'] = array('template' => 'plusoshare');
   return $themes;
 }
-
-function plusoshare_block_configure($delta = ''){
+/**
+ * Implements hook_block_configure().
+ */
+function plusoshare_block_configure($delta = '') {
   $form = array();
   // настройки по умолчанию
-  $default = variable_get('plusoshare_options','')->options;
-  
-  
-  if ( $delta == 'plusoshare'){
+  $default = variable_get('plusoshare_options', '')->options;
+
+  if ($delta == 'plusoshare') {
     $form['settings'] = array(
       '#type' => 'fieldset',
       '#title' => t('Settings'),
       '#collapsed' => TRUE,
       '#collapsible' => TRUE,
     );
-    
+
     $form['settings']['size'] = array(
       '#title' => t('Size'),
       '#type' => 'radios',
-      '#options' => array('small' => t('Small') . ' (20x20px)', 'medium' => t('Medium')  . ' (30x30px)', 'big' => t('Big') . ' (40x40px)'),
+      '#options' => array(
+        'small' => t('Small') . ' (20x20px)',
+        'medium' => t('Medium') . ' (30x30px)',
+        'big' => t('Big') . ' (40x40px)',
+      ),
       '#default_value' => $default->size,
     );
-    
+
     $form['settings']['shape'] = array(
       '#title' => t('Shape'),
       '#type' => 'radios',
-      '#options' => array('square' => t('Square'), 'round' =>t('Round')),
+      '#options' => array('square' => t('Square'), 'round' => t('Round')),
       '#default_value' => "$default->shape",
     );
-    
+
     $form['settings']['multiline'] = array(
       '#title' => t('Multiline'),
       '#type' => 'radios',
-      '#options' => array('line' => t('No'), 'multiline' =>t('Yes')),
+      '#options' => array('line' => t('No'), 'multiline' => t('Yes')),
       '#default_value' => $default->multiline,
     );
-    
+
     $form['settings']['counter'] = array(
       '#title' => t('Counter'),
       '#type' => 'radios',
-      '#options' => array('nocounter' => t('No'), 'counter' =>t('Yes')),
+      '#options' => array('nocounter' => t('No'), 'counter' => t('Yes')),
       '#default_value' => $default->counter,
     );
-    
+
     $form['settings']['layout'] = array(
       '#title' => t('Layout'),
       '#type' => 'radios',
-      '#options' => array('vertical' => t('Vertical'), 'horizontal' =>t('Horizontal')),
+      '#options' => array('vertical' => t('Vertical'), 'horizontal' => t('Horizontal')),
       '#default_value' => $default->layout,
     );
-    
+
     $form['settings']['account'] = array(
       '#type' => 'textfield',
       '#title' => t('Account'),
       '#default_value' => $default->account,
     );
-    
+
     $form['appearance'] = array(
       '#type' => 'fieldset',
       '#title' => t('Appearance'),
       '#collapsed' => TRUE,
       '#collapsible' => TRUE,
     );
-    
+
     $form['appearance']['color'] = array(
       '#type' => 'textfield',
       '#title' => t('Background color'),
       '#default_value' => $default->color,
-      '#description' =>  'Empty value = transparent color',
+      '#description' => 'Empty value = transparent color',
     );
-    
+
     $form['settings']['domain'] = array(
       '#type' => 'textfield',
       '#title' => t('Domain'),
       '#default_value' => $default->domain,
-      '#description' =>  '',
+      '#description' => '',
     );
-    
+
     $pluso_theme = array(
       '01' => 'Theme 01',
       '02' => 'Theme 02',
@@ -115,92 +130,84 @@ function plusoshare_block_configure($delta = ''){
       '07' => 'Theme 07',
       '08' => 'Theme 08',
     );
-    
+
     $form['appearance']['theme'] = array(
       '#title' => t('Theme'),
       '#type' => 'radios',
       '#options' => $pluso_theme,
       '#default_value' => $default->theme,
     );
-    
+
     $form['services-set'] = array(
       '#type' => 'fieldset',
       '#title' => t('Services'),
       '#collapsed' => TRUE,
       '#collapsible' => TRUE,
     );
-    
-    
+
     $options = array();
-    foreach (get_services() AS $key => $val){
+    foreach (get_services() as $key => $val) {
       $options[$key] = $val->title;
     }
-    
+
     $form['services-set']['services'] = array(
       '#title' => t('Services'),
       '#type' => 'checkboxes',
       '#options' => $options,
-      '#default_value' => variable_get('plusoshare_options','')->services,
+      '#default_value' => variable_get('plusoshare_options', '')->services,
     );
-    //dsm($default);
+    // dsm($default);
   }
- 
+
   return $form;
 }
-
-function plusoshare_block_save($delta = '', $edit = array()){
-  if ( $delta == 'plusoshare' ){
-    //dsm($edit);
-    $settings = variable_get('plusoshare_options','');
+/**
+ * Implements hook_block_save().
+ */
+function plusoshare_block_save($delta = '', $edit = array()) {
+  if ($delta == 'plusoshare') {
+    // dsm($edit);
+    $settings = variable_get('plusoshare_options', '');
     $options = $settings->options;
-    
-    foreach ($options AS $key => $val){
+
+    foreach ($options as $key => $val) {
       $options->$key = $edit[$key];
     }
-    
+
     $services = array();
-    foreach ($edit['services'] AS $key => $val){
-      //dsm($val);
-      if ( $val !== 0){
+    foreach ($edit['services'] as $key => $val) {
+      // dsm($val);
+      if ($val !== 0) {
         $services[] = $val;
       }
-      //dsm($services);
+      // dsm($services);
     }
-    
     $settings->services = $services;
-    
-    
-    
     $settings->options = $options;
     variable_set('plusoshare_options', $settings);
-    
-    
-  } 
+  }
 }
 
 function template_preprocess_plusoshare(&$vars) {
   $vars['plusoshare'] = pluso_generate();
-  $vars['script'] = variable_get('plusoshare_options','')->script;
+  $vars['script'] = variable_get('plusoshare_options', '')->script;
 }
 
-function pluso_generate(){
+function pluso_generate() {
   $pluso = array();
-  $obj = variable_get('plusoshare_options','');
-  
+  $obj = variable_get('plusoshare_options', '');
   $obj->options->theme = 'theme=' . $obj->options->theme;
-  
   $pluso['options'] = 'data-options="' . implode((array)$obj->options, ',') . '"';
-  
   $pluso['services'] = 'data-services="' . implode($obj->services, ',') . '"';
   $pluso['background'] = 'data-background="' . $obj->options->color . '"';
   $pluso['url'] = 'data-url="' . $obj->options->domain . '/' . $_GET['q'] . '"';
   $pluso['user'] = 'data-user="' . $obj->options->account . '"';
-  //dsm($obj);
+  // dsm($obj);
   return implode($pluso, ' ');
 }
 
 
-function plusoshare_menu(){
+function plusoshare_menu() {
   $items = array();
   
   $items['admin/config/karbunkul'] = array(
@@ -211,7 +218,7 @@ function plusoshare_menu(){
     'file' => 'system.admin.inc',
     'file path' => drupal_get_path('module', 'system'),
   );
-
+  
   $items['admin/config/karbunkul/plusoshare'] = array(
     'title' => 'Pluso share',
     'description' => 'Pluso share settings and services',
@@ -220,14 +227,14 @@ function plusoshare_menu(){
     
     'type' => MENU_NORMAL_ITEM,
   );
-  
+
   $items['admin/config/karbunkul/plusoshare/default'] = array(
     'title' => t('Pluso share'),
     'access callback' => TRUE,
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
   );
-  
+
   $items['admin/config/karbunkul/plusoshare/settings'] = array(
     'title' => 'Settings',
     'description' => '',
@@ -237,14 +244,13 @@ function plusoshare_menu(){
     'type' => MENU_LOCAL_TASK,
     'weight' => 10,
   );
-  
-  
+
   return $items;
 }
 
-function plusoshare_settings_form($form){
+function plusoshare_settings_form($form) {
   $obj = variable_get('plusoshare_options','');
-  //dsm($obj);
+  // dsm($obj);
   $form['script'] = array(
     '#type' => 'textarea',
     '#title' => 'Script',
@@ -264,35 +270,33 @@ function plusoshare_settings_form($form){
   return $form;
 }
 
-function page_pluso(){
-  
-  //dsm(get_services());
-  
+function page_pluso() {
+
+  // dsm(get_services());
   
   $out = array(
     '#type' => 'markup',
     '#markup' => 'Services',
   );
   
-  
   return $out;
 }
 
-function get_services(){
+function get_services() {
   // получаем список сервисов из настроек
   $obj = variable_get('plusoshare_options','');
-  
+
   $ptn = "/\[.*\]/m";
   $str = $obj->source;
   preg_match_all($ptn, $str, $matches);
-  foreach ($matches[0] AS $key => $val){
+  foreach ($matches[0] as $key => $val) {
     $clear = preg_match('/(?<=\[).[^\]]*/', $val, $arr);
     $arr = explode(',', $arr[0]);
-    
+
     $args = array('!name' => str_replace("'", "", $arr[0]), '!title' => str_replace("'", "", $arr[1]));
     $matches[0][$key] = format_string('"!name":{"title":"!title"}', $args);
   }
-  
+
   $services = json_decode('{' . implode(',',$matches[0]) . '}');
   return $services;
 }
